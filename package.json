@@ -1,18 +1,19 @@
 {
   "name": "alexandrajs-mlc-aim",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Aggregated, In-Memory cache for AlexandraJS MLC",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "coverage": "istanbul cover _mocha -- -R spec",
-    "gh-pages-docs": "./node_modules/.bin/jsdoc -c ./.jsdocrc -r -R ./README.md -d ../../gh-pages/yadll/ src/",
+    "gh-pages-docs": "./node_modules/.bin/jsdoc -c ./.jsdocrc -r -R ./README.md -d ../gh-pages/mlc-aim/ src/",
     "codeclimate": "docker run --rm --env CODECLIMATE_CODE=\"$PWD\" --volume \"$PWD\":/code --volume /var/run/docker.sock:/var/run/docker.sock --volume /tmp/cc:/tmp/cc codeclimate/codeclimate analyze -f html > codeclimate.html"
   },
   "keywords": [
     "alexandrajs",
     "multi-layer cache",
-    "aggregated", "in-memory"
+    "aggregated",
+    "in-memory"
   ],
   "author": "Michał Żaloudik <ponury.kostek@gmail.com>",
   "license": "ISC",
@@ -26,5 +27,13 @@
     "jsdoc": "^3.4.3",
     "mocha": "^2.5.3",
     "mocha-lcov-reporter": "^1.2.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexandrajs/mlc-aim.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alexandrajs/mlc-aim/issues"
+  },
+  "homepage": "https://github.com/alexandrajs/mlc-aim#readme"
 }
