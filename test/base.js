@@ -11,12 +11,12 @@ describe('Base', () => {
 		it('has', (done) => {
 			let mlc = new MLC();
 			mlc.use(new AIM());
-			mlc.has('key', function (err, has) {
+			mlc.has('key', 'field', function (err, has) {
 				assert.strictEqual(err, null);
 				assert.strictEqual(has, false);
-				mlc.set('key', 'value', (err) => {
+				mlc.set('key', 'field', 'value', (err) => {
 					assert.strictEqual(err, null);
-					mlc.has('key', function (err, has) {
+					mlc.has('key', 'field', function (err, has) {
 						assert.strictEqual(err, null);
 						assert.strictEqual(has, true);
 						done();
@@ -27,9 +27,9 @@ describe('Base', () => {
 		it('set', (done) => {
 			let mlc = new MLC();
 			mlc.use(new AIM());
-			mlc.set('key', 'value', (err) => {
+			mlc.set('key', 'field', 'value', (err) => {
 				assert.strictEqual(err, null);
-				mlc.has('key', (err, has) => {
+				mlc.has('key', 'field', (err, has) => {
 					assert.strictEqual(err, null);
 					assert.strictEqual(has, true);
 					done();
@@ -39,12 +39,12 @@ describe('Base', () => {
 		it('get', (done) => {
 			let mlc = new MLC();
 			mlc.use(new AIM());
-			mlc.get('key', function (err, value) {
+			mlc.get('key', 'field', function (err, value) {
 				assert.strictEqual(err, null);
 				assert.strictEqual(value, null);
-				mlc.set('key', 'value', (err) => {
+				mlc.set('key', 'field', 'value', (err) => {
 					assert.strictEqual(err, null);
-					mlc.get('key', function (err, val) {
+					mlc.get('key', 'field', function (err, val) {
 						assert.strictEqual(err, null);
 						assert.strictEqual(val, 'value');
 						done();
@@ -55,14 +55,14 @@ describe('Base', () => {
 		it('delete', (done) => {
 			let mlc = new MLC();
 			mlc.use(new AIM());
-			mlc.set('key', 'value', (err) => {
+			mlc.set('key', 'field', 'value', (err) => {
 				assert.strictEqual(err, null);
-				mlc.has('key', (err, has) => {
+				mlc.has('key', 'field', (err, has) => {
 					assert.strictEqual(err, null);
 					assert.strictEqual(has, true);
-					mlc.delete('key', function (err) {
+					mlc.delete('key', 'field', function (err) {
 						assert.strictEqual(err, null);
-						mlc.has('key', (err, has) => {
+						mlc.has('key', 'field', (err, has) => {
 							assert.strictEqual(err, null);
 							assert.strictEqual(has, false);
 							done();
@@ -74,14 +74,14 @@ describe('Base', () => {
 		it('clear', (done) => {
 			let mlc = new MLC();
 			mlc.use(new AIM());
-			mlc.set('key', 'value', (err) => {
+			mlc.set('key', 'field', 'value', (err) => {
 				assert.strictEqual(err, null);
-				mlc.has('key', (err, has) => {
+				mlc.has('key', 'field', (err, has) => {
 					assert.strictEqual(err, null);
 					assert.strictEqual(has, true);
 					mlc.clear(function (err) {
 						assert.strictEqual(err, null);
-						mlc.has('key', (err, has) => {
+						mlc.has('key', 'field', (err, has) => {
 							assert.strictEqual(err, null);
 							assert.strictEqual(has, false);
 							done();
@@ -94,16 +94,16 @@ describe('Base', () => {
 			let mlc = new MLC();
 			const aim = new AIM();
 			mlc.use(aim);
-			mlc.get('key', function (err, value) {
+			mlc.get('key', 'field', function (err, value) {
 				assert.strictEqual(err, null);
 				assert.strictEqual(value, null);
 				const stats = aim.getStats();
 				assert.strictEqual(stats.misses, 1);
 				assert.strictEqual(stats.ratio, 0);
 				assert.strictEqual(stats.hits, 0);
-				mlc.set('key', 'value', (err) => {
+				mlc.set('key', 'field', 'value', (err) => {
 					assert.strictEqual(err, null);
-					mlc.get('key', function (err, val) {
+					mlc.get('key', 'field', function (err, val) {
 						assert.strictEqual(err, null);
 						assert.strictEqual(val, 'value');
 						let stats = aim.getStats(true);
@@ -125,12 +125,12 @@ describe('Base', () => {
 			const mlc = new MLC(), aim1 = new AIM(), aim2 = new AIM();
 			mlc.use(aim1);
 			mlc.use(aim2);
-			aim2.has('key', function (err, has) {
+			aim2.has('key', 'field', function (err, has) {
 				assert.strictEqual(err, null);
 				assert.strictEqual(has, false);
-				mlc.set('key', 'value', (err) => {
+				mlc.set('key', 'field', 'value', (err) => {
 					assert.strictEqual(err, null);
-					aim2.has('key', function (err, has) {
+					aim2.has('key', 'field', function (err, has) {
 						assert.strictEqual(err, null);
 						assert.strictEqual(has, true);
 						done();
@@ -142,9 +142,9 @@ describe('Base', () => {
 			const mlc = new MLC(), aim1 = new AIM(), aim2 = new AIM();
 			mlc.use(aim1);
 			mlc.use(aim2);
-			mlc.set('key', 'value', (err) => {
+			mlc.set('key', 'field', 'value', (err) => {
 				assert.strictEqual(err, null);
-				aim2.has('key', (err, has) => {
+				aim2.has('key', 'field', (err, has) => {
 					assert.strictEqual(err, null);
 					assert.strictEqual(has, true);
 					done();
@@ -155,16 +155,16 @@ describe('Base', () => {
 			const mlc = new MLC(), aim1 = new AIM(), aim2 = new AIM();
 			mlc.use(aim1);
 			mlc.use(aim2);
-			aim2.get('key', function (err, value) {
+			aim2.get('key', 'field', function (err, value) {
 				assert.strictEqual(err, null);
 				assert.strictEqual(value, null);
-				aim2.set('key', 'value', (err) => {
+				aim2.set('key', 'field', 'value', (err) => {
 					assert.strictEqual(err, null);
-					mlc.get('key', function (err, val) {
+					mlc.get('key', 'field', function (err, val) {
 						assert.strictEqual(err, null);
 						assert.strictEqual(val, 'value');
 					});
-					mlc.get('key', function (err, val) {
+					mlc.get('key', 'field', function (err, val) {
 						assert.strictEqual(err, null);
 						assert.strictEqual(val, 'value');
 						done();
@@ -176,14 +176,14 @@ describe('Base', () => {
 			const mlc = new MLC(), aim1 = new AIM(), aim2 = new AIM();
 			mlc.use(aim1);
 			mlc.use(aim2);
-			mlc.set('key', 'value', (err) => {
+			mlc.set('key', 'field', 'value', (err) => {
 				assert.strictEqual(err, null);
-				aim2.has('key', (err, has) => {
+				aim2.has('key', 'field', (err, has) => {
 					assert.strictEqual(err, null);
 					assert.strictEqual(has, true);
-					mlc.delete('key', function (err) {
+					mlc.delete('key', 'field', function (err) {
 						assert.strictEqual(err, null);
-						aim2.has('key', (err, has) => {
+						aim2.has('key', 'field', (err, has) => {
 							assert.strictEqual(err, null);
 							assert.strictEqual(has, false);
 							done();
@@ -196,14 +196,14 @@ describe('Base', () => {
 			const mlc = new MLC(), aim1 = new AIM(), aim2 = new AIM();
 			mlc.use(aim1);
 			mlc.use(aim2);
-			mlc.set('key', 'value', (err) => {
+			mlc.set('key', 'field', 'value', (err) => {
 				assert.strictEqual(err, null);
-				aim2.has('key', (err, has) => {
+				aim2.has('key', 'field', (err, has) => {
 					assert.strictEqual(err, null);
 					assert.strictEqual(has, true);
 					mlc.clear(true, function (err) {
 						assert.strictEqual(err, null);
-						aim2.has('key', (err, has) => {
+						aim2.has('key', 'field', (err, has) => {
 							assert.strictEqual(err, null);
 							assert.strictEqual(has, false);
 							done();

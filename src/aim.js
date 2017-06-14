@@ -26,70 +26,85 @@ function AIM() {
 /**
  *
  * @param key
+ * @param field
  * @param callback
  */
-AIM.prototype.has = function (key, callback) {
+AIM.prototype.has = function (key, field, callback) {
+	const keyValue = this.data.get(key);
 	return void process.nextTick(() => {
-		callback(null, this.data.has(key));
+		callback(null, !!keyValue && keyValue.has(field));
 	});
 };
 /**
  *
  * @param key
+ * @param field
  * @param callback
  */
-AIM.prototype.get = function (key, callback) {
-	if (this.data.has(key)) {
+AIM.prototype.get = function (key, field, callback) {
+	const keyValue = this.data.get(key) || new Map();
+	if (keyValue && keyValue.has(field)) {
 		this.stats.hits++;
 		return void process.nextTick(() => {
-			callback(null, this.data.get(key));
+			callback(null, keyValue.get(field));
 		});
 	}
+	this.data.set(key, keyValue);
 	this.stats.misses++;
 	if (!this.next) {
 		return void callback(null, null);
 	}
-	if (!this.queryStack.has(key)) {
-		this.queryStack.set(key, []);
-		this.next.get(key, (err, value) => {
+	const queryStackKey = key + '---' + field;
+	if (!this.queryStack.has(queryStackKey)) {
+		this.queryStack.set(queryStackKey, []);
+		this.next.get(key, field, (err, value) => {
 			if (err === null) {
-				this.data.set(key, value);
+				keyValue.set(field, value);
 			}
-			this.queryStack.get(key).forEach((cb) => {
+			this.queryStack.get(queryStackKey).forEach((cb) => {
 				cb(err, value);
 			})
 		});
 	}
-	this.queryStack.get(key).push(callback);
+	this.queryStack.get(queryStackKey).push(callback);
 };
 /**
  *
  * @param key
+ * @param field
  * @param value
  * @param callback
  */
-AIM.prototype.set = function (key, value, callback) {
-	this.data.set(key, value);
+AIM.prototype.set = function (key, field, value, callback) {
+	const keyValue = this.data.get(key) || new Map();
+	if (!this.data.has(key)) {
+		this.data.set(key, keyValue);
+	}
+	keyValue.set(field, value);
 	if (!this.next) {
 		return void process.nextTick(() => {
 			callback(null, true);
 		});
 	}
-	this.next.set(key, value, callback);
+	this.next.set(key, field, value, callback);
 };
 /**
  *
  * @param key
+ * @param field
  * @param callback
  */
-AIM.prototype.delete = function (key, callback) {
-	this.data.delete(key);
+AIM.prototype.delete = function (key, field, callback) {
+	const keyValue = this.data.get(key);
+	if (keyValue) {
+		keyValue.delete(field);
+	}
 	if (!this.next) {
 		return void process.nextTick(() => {
 			callback(null, true);
 		});
 	}
-	this.next.delete(key, callback);
+	this.next.delete(key, field, callback);
 };
 /**
  * @param [propagate]
