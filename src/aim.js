@@ -6,7 +6,7 @@
  *
  * @constructor
  */
-function AIM() {
+function Aim() {
 	/**
 	 *
 	 * @type {object}
@@ -29,7 +29,7 @@ function AIM() {
  * @param field
  * @param callback
  */
-AIM.prototype.has = function (key, field, callback) {
+Aim.prototype.has = function (key, field, callback) {
 	const keyValue = this.data.get(key);
 	return void process.nextTick(() => {
 		callback(null, !!keyValue && keyValue.has(field));
@@ -41,7 +41,7 @@ AIM.prototype.has = function (key, field, callback) {
  * @param field
  * @param callback
  */
-AIM.prototype.get = function (key, field, callback) {
+Aim.prototype.get = function (key, field, callback) {
 	const keyValue = this.data.get(key) || new Map();
 	if (keyValue && keyValue.has(field)) {
 		this.stats.hits++;
@@ -75,7 +75,7 @@ AIM.prototype.get = function (key, field, callback) {
  * @param value
  * @param callback
  */
-AIM.prototype.set = function (key, field, value, callback) {
+Aim.prototype.set = function (key, field, value, callback) {
 	const keyValue = this.data.get(key) || new Map();
 	if (!this.data.has(key)) {
 		this.data.set(key, keyValue);
@@ -94,7 +94,7 @@ AIM.prototype.set = function (key, field, value, callback) {
  * @param field
  * @param callback
  */
-AIM.prototype.delete = function (key, field, callback) {
+Aim.prototype.delete = function (key, field, callback) {
 	const keyValue = this.data.get(key);
 	if (keyValue) {
 		keyValue.delete(field);
@@ -110,7 +110,7 @@ AIM.prototype.delete = function (key, field, callback) {
  * @param [propagate]
  * @param callback
  */
-AIM.prototype.clear = function (propagate, callback) {
+Aim.prototype.clear = function (propagate, callback) {
 	if (typeof propagate === 'function') {
 		callback = propagate;
 		propagate = undefined;
@@ -128,7 +128,7 @@ AIM.prototype.clear = function (propagate, callback) {
  * @param [clear]
  * @returns {{hits: number, misses: number, ratio: number}}
  */
-AIM.prototype.getStats = function (clear) {
+Aim.prototype.getStats = function (clear) {
 	const stats = this.stats;
 	stats.ratio = stats.hits && stats.misses ? stats.hits / stats.misses : 0;
 	if (clear) {
@@ -139,10 +139,10 @@ AIM.prototype.getStats = function (clear) {
 /**
  *
  */
-AIM.prototype.clearStats = function () {
+Aim.prototype.clearStats = function () {
 	this.stats = {
 		hits: 0,
 		misses: 0
 	};
 };
-module.exports = AIM;
+module.exports = Aim;

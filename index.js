@@ -2,5 +2,5 @@
 /**
  * @author Michał Żaloudik <ponury.kostek@gmail.com>
  */
-const AIM = require('./src/aim');
-module.exports = AIM;
+const Aim = require('./src/aim');
+module.exports = Aim;
