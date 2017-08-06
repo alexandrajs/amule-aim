@@ -6,7 +6,7 @@
   "scripts": {
     "test": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "coverage": "istanbul cover _mocha -- -R spec",
-    "gh-pages-docs": "./node_modules/.bin/jsdoc -c ./.jsdocrc -r -R ./README.md -d ../gh-pages/aMule-Aim/ src/",
+    "gh-pages-docs": "./node_modules/.bin/jsdoc -c ./.jsdocrc -r -R ./README.md -d ../gh-pages/amule-aim/ src/",
     "codeclimate": "docker run --rm --env CODECLIMATE_CODE=\"$PWD\" --volume \"$PWD\":/code --volume /var/run/docker.sock:/var/run/docker.sock --volume /tmp/cc:/tmp/cc codeclimate/codeclimate analyze -f html > codeclimate.html"
   },
   "keywords": [
@@ -30,10 +30,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alexandrajs/aMule-Aim.git"
+    "url": "git+https://github.com/alexandrajs/amule-aim.git"
   },
   "bugs": {
-    "url": "https://github.com/alexandrajs/aMule-Aim/issues"
+    "url": "https://github.com/alexandrajs/amule-aim/issues"
   },
-  "homepage": "https://github.com/alexandrajs/aMule-Aim#readme"
+  "homepage": "https://github.com/alexandrajs/amule-aim#readme"
 }
