@@ -80,13 +80,18 @@ Aim.prototype.set = function (key, field, value, callback) {
 	if (!this.data.has(key)) {
 		this.data.set(key, keyValue);
 	}
-	keyValue.set(field, value);
+	const cb = (err) => {
+		if (!err) {
+			keyValue.set(field, value);
+		}
+		callback(err);
+	};
 	if (!this.next) {
 		return void process.nextTick(() => {
-			callback(null, true);
+			cb(null);
 		});
 	}
-	this.next.set(key, field, value, callback);
+	this.next.set(key, field, value, cb);
 };
 /**
  *
@@ -96,15 +101,18 @@ Aim.prototype.set = function (key, field, value, callback) {
  */
 Aim.prototype.delete = function (key, field, callback) {
 	const keyValue = this.data.get(key);
-	if (keyValue) {
-		keyValue.delete(field);
-	}
+	const cb = (err) => {
+		if (!err && keyValue) {
+			keyValue.delete(field);
+		}
+		callback(err);
+	};
 	if (!this.next) {
 		return void process.nextTick(() => {
-			callback(null, true);
+			cb(null);
 		});
 	}
-	this.next.delete(key, field, callback);
+	this.next.delete(key, field, cb);
 };
 /**
  * @param [propagate]
