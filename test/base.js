@@ -8,7 +8,16 @@ const Aim = require('../');
 const assert = require('assert');
 describe('Base', () => {
 	describe('AMule', () => {
-		it('has', (done) => {
+		it('has (false)', (done) => {
+			let mule = new AMule();
+			mule.use(new Aim());
+			mule.has('key', 'field', function (err, has) {
+				assert.strictEqual(err, null);
+				assert.strictEqual(has, false);
+				done();
+			});
+		});
+		it('has (true)', (done) => {
 			let mule = new AMule();
 			mule.use(new Aim());
 			mule.has('key', 'field', function (err, has) {
@@ -119,6 +128,58 @@ describe('Base', () => {
 				});
 			});
 		});
+		it('has', (done) => {
+			let mule = new AMule();
+			mule.use(new Aim({cache:false}));
+			mule.has('key', 'field', function (err, has) {
+				assert.strictEqual(err, null);
+				assert.strictEqual(has, false);
+				mule.set('key', 'field', 'value', (err) => {
+					assert.strictEqual(err, null);
+					mule.has('key', 'field', function (err, has) {
+						assert.strictEqual(err, null);
+						assert.strictEqual(has, false);
+						done();
+					})
+				});
+			});
+		});
+		it('get', (done) => {
+			let mule = new AMule();
+			mule.use(new Aim({cache:false}));
+			mule.get('key', 'field', function (err, value) {
+				assert.strictEqual(err, null);
+				assert.strictEqual(value, null);
+				mule.set('key', 'field', 'value', (err) => {
+					assert.strictEqual(err, null);
+					mule.get('key', 'field', function (err, val) {
+						assert.strictEqual(err, null);
+						assert.strictEqual(val, null);
+						done();
+					})
+				});
+			});
+		});
+		it('delete', (done) => {
+			let mule = new AMule();
+			mule.use(new Aim({cache:false}));
+			mule.set('key', 'field', 'value', (err) => {
+				assert.strictEqual(err, null);
+				mule.has('key', 'field', (err, has) => {
+					assert.strictEqual(err, null);
+					assert.strictEqual(has, false);
+					mule.delete('key', 'field', function (err) {
+						assert.strictEqual(err, null);
+						mule.has('key', 'field', (err, has) => {
+							assert.strictEqual(err, null);
+							assert.strictEqual(has, false);
+							done();
+						});
+					});
+				});
+			});
+		});
+
 	});
 	describe('AMule 2 levels', () => {
 		it('has', (done) => {
@@ -160,14 +221,24 @@ describe('Base', () => {
 				assert.strictEqual(value, null);
 				aim2.set('key', 'field', 'value', (err) => {
 					assert.strictEqual(err, null);
+					let c = 2;
+
+					function get_cb() {
+						c--;
+						if (!c) {
+							done();
+						}
+					}
+
 					mule.get('key', 'field', function (err, val) {
 						assert.strictEqual(err, null);
 						assert.strictEqual(val, 'value');
+						get_cb();
 					});
 					mule.get('key', 'field', function (err, val) {
 						assert.strictEqual(err, null);
 						assert.strictEqual(val, 'value');
-						done();
+						get_cb();
 					})
 				});
 			});
