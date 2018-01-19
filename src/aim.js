@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @author Michał Żaloudik <ponury.kostek@gmail.com>
@@ -66,7 +66,7 @@ Aim.prototype.get = function (key, field, callback) {
 			callback(null, null);
 		});
 	}
-	const queryStackKey = key + '---' + field;
+	const queryStackKey = key + "---" + field;
 	if (!this.queryStack.has(queryStackKey)) {
 		this.queryStack.set(queryStackKey, []);
 		this.next.get(key, field, (err, value) => {
@@ -75,7 +75,8 @@ Aim.prototype.get = function (key, field, callback) {
 			}
 			this.queryStack.get(queryStackKey).forEach((cb) => {
 				cb(err, value);
-			})
+			});
+			this.queryStack.clear();
 		});
 	}
 	this.queryStack.get(queryStackKey).push(callback);
@@ -137,7 +138,7 @@ Aim.prototype.delete = function (key, field, callback) {
  * @param callback
  */
 Aim.prototype.clear = function (propagate, callback) {
-	if (typeof propagate === 'function') {
+	if (typeof propagate === "function") {
 		callback = propagate;
 		propagate = undefined;
 	}

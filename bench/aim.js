@@ -2,43 +2,59 @@
  * @author Michał Żaloudik <ponury.kostek@gmail.com>
  */
 "use strict";
-const Benchmark = require('benchmark');
+const Benchmark = require("benchmark");
 const suite = new Benchmark.Suite;
-const Aim = require('../');
+const Aim = require("../");
 const aim = new Aim();
-const a = new Aim({cache:false});
-aim.set('hash', 'key', 'value', (err) => {
-	suite.add('has', {
+const a = new Aim({cache: false});
+aim.set("hash", "key", "value", (err) => {
+	if (err) {
+		console.log(err);
+		return;
+	}
+	suite.add("has", {
 		defer: true,
 		fn: function (deferred) {
-			aim.has('hash', 'key', (err, has) => {
+			aim.has("hash", "key", (err) => {
+				if (err) {
+					return deferred.reject(err);
+				}
 				deferred.resolve();
 			});
 		}
-	}).add('get', {
+	}).add("get", {
 		defer: true,
 		fn: function (deferred) {
-			aim.get('hash', 'key', (err, has) => {
+			aim.get("hash", "key", (err) => {
+				if (err) {
+					return deferred.reject(err);
+				}
 				deferred.resolve();
 			});
 		}
-	}).add('has (disabled cache)', {
+	}).add("has (disabled cache)", {
 		defer: true,
 		fn: function (deferred) {
-			a.has('hash', 'key', (err, has) => {
+			a.has("hash", "key", (err) => {
+				if (err) {
+					return deferred.reject(err);
+				}
 				deferred.resolve();
 			});
 		}
-	}).add('get (disabled cache)', {
+	}).add("get (disabled cache)", {
 		defer: true,
 		fn: function (deferred) {
-			a.get('hash', 'key', (err, has) => {
+			a.get("hash", "key", (err) => {
+				if (err) {
+					return deferred.reject(err);
+				}
 				deferred.resolve();
 			});
 		}
-	}).on('cycle', function (event) {
+	}).on("cycle", function (event) {
 		console.log(String(event.target));
-	}).on('complete', function () {
+	}).on("complete", function () {
 		//console.log('Fastest is ' + this.filter('fastest').map('name').join(', '));
-	}).run({'async': true});
+	}).run({"async": true});
 });
