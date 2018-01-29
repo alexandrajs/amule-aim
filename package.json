@@ -1,6 +1,6 @@
 {
   "name": "amule-aim",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "Aggregated, In-Memory cache for AlexandraJS aMule",
   "main": "index.js",
   "scripts": {

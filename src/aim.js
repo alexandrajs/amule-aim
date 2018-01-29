@@ -76,7 +76,7 @@ Aim.prototype.get = function (key, field, callback) {
 			this.queryStack.get(queryStackKey).forEach((cb) => {
 				cb(err, value);
 			});
-			this.queryStack.clear();
+			this.queryStack.delete(queryStackKey);
 		});
 	}
 	this.queryStack.get(queryStackKey).push(callback);
