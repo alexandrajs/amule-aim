@@ -99,35 +99,6 @@ describe("Base", () => {
 				});
 			});
 		});
-		it("stats", (done) => {
-			let mule = new AMule();
-			const aim = new Aim();
-			mule.use(aim);
-			mule.get("key", "field", function (err, value) {
-				assert.strictEqual(err, null);
-				assert.strictEqual(value, null);
-				const stats = aim.getStats();
-				assert.strictEqual(stats.misses, 1);
-				assert.strictEqual(stats.ratio, 0);
-				assert.strictEqual(stats.hits, 0);
-				mule.set("key", "field", "value", (err) => {
-					assert.strictEqual(err, null);
-					mule.get("key", "field", function (err, val) {
-						assert.strictEqual(err, null);
-						assert.strictEqual(val, "value");
-						let stats = aim.getStats(true);
-						assert.strictEqual(stats.misses, 1);
-						assert.strictEqual(stats.ratio, 1);
-						assert.strictEqual(stats.hits, 1);
-						stats = aim.getStats();
-						assert.strictEqual(stats.misses, 0);
-						assert.strictEqual(stats.ratio, 0);
-						assert.strictEqual(stats.hits, 0);
-						done();
-					});
-				});
-			});
-		});
 		it("has", (done) => {
 			let mule = new AMule();
 			mule.use(new Aim({cache: false}));
@@ -271,7 +242,7 @@ describe("Base", () => {
 				aim2.has("key", "field", (err, has) => {
 					assert.strictEqual(err, null);
 					assert.strictEqual(has, true);
-					mule.clear(true, function (err) {
+					mule.clear(function (err) {
 						assert.strictEqual(err, null);
 						aim2.has("key", "field", (err, has) => {
 							assert.strictEqual(err, null);
