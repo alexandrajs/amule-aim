@@ -1,6 +1,6 @@
 {
   "name": "amule-aim",
-  "version": "0.4.4",
+  "version": "0.5.0",
   "description": "Aggregated, In-Memory cache for AlexandraJS aMule",
   "main": "index.js",
   "scripts": {
@@ -17,16 +17,18 @@
   ],
   "author": "Michał Żaloudik <ponury.kostek@gmail.com>",
   "license": "ISC",
-  "dependencies": {},
+  "peerDependencies": {
+    "amule": "^0.2.3"
+  },
   "devDependencies": {
-    "amule": "^0.2.0",
+    "amule": "^0.2.3",
     "benchmark": "^2.1.4",
-    "coveralls": "^2.13.3",
+    "coveralls": "^3.0.1",
     "ink-docstrap": "^1.3.0",
     "istanbul": "^0.4.5",
     "jsdoc": "^3.5.5",
-    "mocha": "^2.5.3",
-    "mocha-lcov-reporter": "^1.2.0"
+    "mocha": "^5.1.1",
+    "mocha-lcov-reporter": "^1.3.0"
   },
   "repository": {
     "type": "git",
