@@ -13,12 +13,16 @@ class Aim extends Layer {
 	constructor(options) {
 		super();
 		this.options = Object.assign({
-			cache: true
+			cache: true,
+			ttl: 0
 		}, options);
 		if (this.options.cache) {
 			this.data = new Map();
+			if (this.options.ttl) {
+				this.ttl = new Map();
+			}
 		}
-		this.queryStack = new Map();
+		this.query = new Map();
 	}
 
 	/**
@@ -29,8 +33,7 @@ class Aim extends Layer {
 	 */
 	has(key, field, callback) {
 		return void process.nextTick(() => {
-			const keyValue = this.options.cache ? this.data.get(key) : false;
-			callback(null, !!(keyValue && keyValue.has(field)));
+			callback(null, this.options.cache && this.data.has(_mapKey(key, field)));
 		});
 	}
 
@@ -42,16 +45,14 @@ class Aim extends Layer {
 	 */
 	get(key, field, callback) {
 		process.nextTick(() => {
-			let keyValue;
+			const mapKey = _mapKey(key, field);
 			if (this.options.cache) {
-				keyValue = this.data.get(key) || new Map();
-				if (keyValue.has(field)) {
+				if (this.data.has(mapKey)) {
 					this.stats.hits++;
 					return void process.nextTick(() => {
-						callback(null, keyValue.get(field));
+						callback(null, this.data.get(mapKey));
 					});
 				}
-				this.data.set(key, keyValue);
 				this.stats.misses++;
 			}
 			if (!this.next) {
@@ -59,20 +60,19 @@ class Aim extends Layer {
 					callback(null, null);
 				});
 			}
-			const queryStackKey = key + "---" + field;
-			if (!this.queryStack.has(queryStackKey)) {
-				this.queryStack.set(queryStackKey, []);
+			if (!this.query.has(mapKey)) {
+				this.query.set(mapKey, []);
 				this.next.get(key, field, (err, value) => {
 					if (err === null && this.options.cache) {
-						keyValue.set(field, value);
+						this.data.set(mapKey, value);
 					}
-					this.queryStack.get(queryStackKey).forEach((cb) => {
+					this.query.get(mapKey).forEach((cb) => {
 						cb(err, value);
 					});
-					this.queryStack.delete(queryStackKey);
+					this.query.delete(mapKey);
 				});
 			}
-			this.queryStack.get(queryStackKey).push(callback);
+			this.query.get(mapKey).push(callback);
 		});
 	}
 
@@ -88,10 +88,15 @@ class Aim extends Layer {
 	_set(key, field, value, callback) {
 		process.nextTick(() => {
 			if (this.options.cache) {
-				const keyValue = this.data.get(key) || new Map();
-				keyValue.set(field, value);
-				if (!this.data.has(key)) {
-					this.data.set(key, keyValue);
+				const mapKey = _mapKey(key, field);
+				this.data.set(mapKey, value);
+				if (this.options.ttl) {
+					const timeout = setTimeout(() => {
+						this._delete(key, field, () => {
+						});
+					}, this.ttl);
+					timeout.unref();
+					this.ttl.set(mapKey, timeout);
 				}
 				return callback(null, true);
 			}
@@ -107,8 +112,13 @@ class Aim extends Layer {
 	 */
 	_delete(key, field, callback) {
 		process.nextTick(() => {
-			if (this.options.cache && this.data.has(key)) {
-				return callback(null, this.data.get(key).delete(field));
+			const mapKey = _mapKey(key, field);
+			if (this.options.cache && this.data.has(mapKey)) {
+				if (this.ttl) {
+					const timeout = this.ttl.get(mapKey);
+					timeout && clearTimeout(timeout);
+				}
+				return callback(null, this.data.delete(mapKey));
 			}
 			callback(null, false);
 		});
@@ -121,7 +131,7 @@ class Aim extends Layer {
 	 */
 	_clear(callback) {
 		process.nextTick(() => {
-			this.queryStack.clear();
+			this.query.clear();
 			if (this.options.cache) {
 				this.data.clear();
 				return callback(null, true);
@@ -132,3 +142,25 @@ class Aim extends Layer {
 }
 
 module.exports = Aim;
+const __map = new Map();
+
+/**
+ *
+ * @param {string} key
+ * @param {string} field
+ * @returns {Object}
+ * @private
+ */
+function _mapKey(key, field) {
+	if (!__map.has(key)) {
+		__map.set(key, new Map());
+	}
+	const _key = __map.get(key);
+	if (!_key.has(field)) {
+		_key.set({
+			key,
+			field
+		});
+	}
+	return _key.get(field);
+}
