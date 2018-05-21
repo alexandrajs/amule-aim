@@ -157,7 +157,7 @@ function _mapKey(key, field) {
 	}
 	const _key = __map.get(key);
 	if (!_key.has(field)) {
-		_key.set({
+		_key.set(field, {
 			key,
 			field
 		});
