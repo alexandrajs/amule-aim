@@ -22,6 +22,7 @@ class Aim extends Layer {
 				this.ttl = new Map();
 			}
 		}
+		this.__map = new Map();
 		this.query = new Map();
 	}
 
@@ -33,7 +34,7 @@ class Aim extends Layer {
 	 */
 	has(key, field, callback) {
 		return void process.nextTick(() => {
-			callback(null, this.options.cache && this.data.has(_mapKey(key, field)));
+			callback(null, this.options.cache && this.data.has(this._mapKey(key, field)));
 		});
 	}
 
@@ -45,7 +46,7 @@ class Aim extends Layer {
 	 */
 	get(key, field, callback) {
 		process.nextTick(() => {
-			const mapKey = _mapKey(key, field);
+			const mapKey = this._mapKey(key, field);
 			if (this.options.cache) {
 				if (this.data.has(mapKey)) {
 					this.stats.hits++;
@@ -88,7 +89,7 @@ class Aim extends Layer {
 	_set(key, field, value, callback) {
 		process.nextTick(() => {
 			if (this.options.cache) {
-				const mapKey = _mapKey(key, field);
+				const mapKey = this._mapKey(key, field);
 				this.data.set(mapKey, value);
 				if (this.options.ttl) {
 					const timeout = setTimeout(() => {
@@ -112,11 +113,13 @@ class Aim extends Layer {
 	 */
 	_delete(key, field, callback) {
 		process.nextTick(() => {
-			const mapKey = _mapKey(key, field);
+			const mapKey = this._mapKey(key, field);
+			this._delMapKey(mapKey);
 			if (this.options.cache && this.data.has(mapKey)) {
 				if (this.ttl) {
 					const timeout = this.ttl.get(mapKey);
 					timeout && clearTimeout(timeout);
+					this.ttl.delete(mapKey);
 				}
 				return callback(null, this.data.delete(mapKey));
 			}
@@ -139,28 +142,44 @@ class Aim extends Layer {
 			callback(null, false);
 		});
 	}
+
+	/**
+	 *
+	 * @param {string} key
+	 * @param {string} field
+	 * @returns {Object}
+	 * @private
+	 */
+	_mapKey(key, field) {
+		if (!this.__map.has(key)) {
+			this.__map.set(key, new Map());
+		}
+		const _key = this.__map.get(key);
+		if (!_key.has(field)) {
+			_key.set(field, {
+				key,
+				field
+			});
+		}
+		return _key.get(field);
+	}
+
+	/**
+	 *
+	 * @param {Object} mapKey
+	 * @param {string} mapKey.key
+	 * @param {string} mapKey.field
+	 * @private
+	 */
+	_delMapKey({key, field}) {
+		const _key = this.__map.get(key);
+		if (_key) {
+			_key.delete(field);
+			if (!_key.size) {
+				this.__map.delete(key);
+			}
+		}
+	}
 }
 
 module.exports = Aim;
-const __map = new Map();
-
-/**
- *
- * @param {string} key
- * @param {string} field
- * @returns {Object}
- * @private
- */
-function _mapKey(key, field) {
-	if (!__map.has(key)) {
-		__map.set(key, new Map());
-	}
-	const _key = __map.get(key);
-	if (!_key.has(field)) {
-		_key.set(field, {
-			key,
-			field
-		});
-	}
-	return _key.get(field);
-}
