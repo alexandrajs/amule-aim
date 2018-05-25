@@ -1,6 +1,6 @@
 {
   "name": "amule-aim",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Aggregated, In-Memory cache for AlexandraJS aMule",
   "main": "index.js",
   "scripts": {
@@ -18,10 +18,10 @@
   "author": "Michał Żaloudik <ponury.kostek@gmail.com>",
   "license": "ISC",
   "peerDependencies": {
-    "amule": "^0.2.3"
+    "amule": "^0.2.4"
   },
   "devDependencies": {
-    "amule": "^0.2.3",
+    "amule": "^0.2.4",
     "benchmark": "^2.1.4",
     "coveralls": "^3.0.1",
     "ink-docstrap": "^1.3.0",
