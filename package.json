@@ -1,6 +1,6 @@
 {
   "name": "amule-aim",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "Aggregated, In-Memory cache for AlexandraJS aMule",
   "main": "index.js",
   "scripts": {
@@ -21,9 +21,9 @@
     "amule": "^0.2.4"
   },
   "devDependencies": {
-    "amule": "^0.2.4",
+    "amule": "^0.2.5",
     "benchmark": "^2.1.4",
-    "coveralls": "^3.0.1",
+    "coveralls": "^3.0.2",
     "ink-docstrap": "^1.3.0",
     "istanbul": "^0.4.5",
     "jsdoc": "^3.5.5",
