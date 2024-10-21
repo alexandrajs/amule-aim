@@ -67,7 +67,7 @@ class Aim extends Layer {
 					if (err === null && this.options.cache) {
 						this.data.set(mapKey, value);
 					}
-					this.query.get(mapKey).forEach((cb) => {
+					this.query.get(mapKey)?.forEach((cb) => {
 						cb(err, value);
 					});
 					this.query.delete(mapKey);
